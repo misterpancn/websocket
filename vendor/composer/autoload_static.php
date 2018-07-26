@@ -12,6 +12,10 @@ class ComposerStaticInit17f829c19d8518f9457794acdb1b07d8
             'Workerman\\MySQL\\' => 16,
             'Workerman\\' => 10,
         ),
+        'P' => 
+        array (
+            'Predis\\' => 7,
+        ),
         'G' => 
         array (
             'GlobalData\\' => 11,
@@ -28,6 +32,10 @@ class ComposerStaticInit17f829c19d8518f9457794acdb1b07d8
         'Workerman\\' => 
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman',
+        ),
+        'Predis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
         'GlobalData\\' => 
         array (

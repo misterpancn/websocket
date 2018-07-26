@@ -4,7 +4,7 @@
  * php start.php start
  */
 
-ini_set('display_errors', 'on');
+ini_set('display_errors', 'off');
 error_reporting(E_ERROR);
 ini_set('date.timezone','Asia/Shanghai');
 use Workerman\Worker;
@@ -27,7 +27,8 @@ if(!extension_loaded('posix'))
 
 // 标记是全局启动
 define('GLOBAL_START', 1);
-
+Worker::$logFile = '/logs/workerman.log';
+Worker::$pidFile = '/logs/workerman.pid';
 require_once __DIR__ . '/vendor/autoload.php';
 
 // 加载所有Applications/*/start.php，以便启动所有服务

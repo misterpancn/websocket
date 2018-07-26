@@ -28,8 +28,8 @@ class Events
     protected static $db;
     public static $mysqlHost = '127.0.0.1';
     public static $mysqlPort = '3306';
-    public static $mysqlUser = 'buck';
-    public static $mysqlPas = 'PanWei@mysql';
+    public static $mysqlUser = 'test';
+    public static $mysqlPas = '123456';
     public static $DBName = 'mychat';
     protected static $global_data;
 

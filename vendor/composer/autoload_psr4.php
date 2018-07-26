@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Workerman\\MySQL\\' => array($vendorDir . '/workerman/mysql/src'),
     'Workerman\\' => array($vendorDir . '/workerman/workerman'),
+    'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'GlobalData\\' => array($vendorDir . '/workerman/globaldata/src'),
     'GatewayWorker\\' => array($vendorDir . '/workerman/gateway-worker/src'),
     'GatewayClient\\' => array($vendorDir . '/workerman/gatewayclient'),

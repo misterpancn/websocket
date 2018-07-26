@@ -1,6 +1,6 @@
 <?php
 ini_set('date.timezone','Asia/Shanghai');
-ini_set('display_errors','on');
+ini_set('display_errors','off');
 error_reporting(E_ERROR);
 session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
@@ -27,7 +27,7 @@ if(!extension_loaded('posix'))
 {
     exit("Please install posix extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
 }
-$mysqlHost = 'localhost';
+$mysqlHost = '127.0.0.1';
 $mysqlPort = '3306';
 $mysqlUser = 'test';
 $mysqlPas = '123456';
