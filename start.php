@@ -27,8 +27,7 @@ if(!extension_loaded('posix'))
 
 // 标记是全局启动
 define('GLOBAL_START', 1);
-Worker::$logFile = '/logs/workerman.log';
-Worker::$pidFile = '/logs/workerman.pid';
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 // 加载所有Applications/*/start.php，以便启动所有服务
@@ -38,5 +37,8 @@ foreach(glob(__DIR__.'/Applications/*/start*.php') as $start_file)
 }
 //开启进程之间数据共享服务
 $worker = new GlobalData\Server('127.0.0.1', 2207);
+//配置log目录
+Worker::$logFile = '/logs/workerman.log';
+Worker::$pidFile = '/logs/workerman.pid';
 // 运行所有服务
 Worker::runAll();
