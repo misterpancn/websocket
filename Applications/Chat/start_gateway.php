@@ -25,7 +25,7 @@ use \Workerman\Autoloader;
         'verify_peer' => false
     )
 );*/
-$gateway = new Gateway("Websocket://0.0.0.0:9526", $context);
+$gateway = new Gateway("Websocket://127.0.0.1:9526");
 //$gateway->transport = 'ssl';
 // gateway名称，status方便查看
 $gateway->name = 'ChatGateway';
