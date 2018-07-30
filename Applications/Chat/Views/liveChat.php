@@ -99,7 +99,7 @@ require_once '../App/Controllers/LiveChatController.php';
     var socket;
     var user_id = $('#user_id').val();
     function connectWS() {
-        socket = new WebSocket('ws://'+document.domain+':9526');
+        socket = new WebSocket('wss://'+document.domain+':9526');
         socket.onopen = onopen;
         socket.onmessage = onmessage;
         socket.onerror = socket_error;
