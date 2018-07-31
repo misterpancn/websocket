@@ -32,7 +32,7 @@ foreach (glob(__DIR__ . '/Applications/*/start*.php') as $start_file) {
     require_once $start_file;
 }
 //开启进程之间数据共享服务
-$worker = new GlobalData\Server('127.0.0.1', 2207);
+$worker = new GlobalData\Server('0.0.0.0', 2207);
 //配置log目录
 Worker::$logFile = __DIR__ . '/logs/workerman.log';
 Worker::$pidFile = __DIR__ . '/logs/workerman.pid';
