@@ -7,7 +7,7 @@
 ini_set('display_errors', 'off');
 error_reporting(E_ERROR);
 ini_set('date.timezone', 'Asia/Shanghai');
-require_once __DIR__ . 'Applications/Chat/App/Controllers/System/config.php';
+require_once __DIR__ . '/Applications/Chat/App/Controllers/System/config.php';
 use Workerman\Worker;
 
 if (strpos(strtolower(PHP_OS), 'win') === 0) {

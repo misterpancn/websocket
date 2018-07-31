@@ -25,8 +25,10 @@ $context = array(
         'verify_peer' => false
     )
 );
-$gateway = new Gateway("Websocket://".GATEWAY_SERVER, $context);
-$gateway->transport = TRANSPORT;
+$gateway = new Gateway("Websocket://" . GATEWAY_SERVER, (IS_BETA ? [] : $context));
+if (!IS_BETA) {
+    $gateway->transport = TRANSPORT;
+}
 // gateway名称，status方便查看
 $gateway->name = GATEWAY_NAME;
 // gateway进程数
