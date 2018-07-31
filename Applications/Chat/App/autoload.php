@@ -4,12 +4,7 @@ ini_set('display_errors','off');
 error_reporting(E_ERROR);
 session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
-/**
- *  Geetest配置文件
- * @author Tanxu
- */
-define("CAPTCHA_ID", "3f4efa9562848d96c4bad358e6faf57b");
-define("PRIVATE_KEY", "929c3ee70dbd989ae8a39a4fde0d76a8");
+
 use GatewayClient\Gateway;
 Gateway::$registerAddress = '127.0.0.1:1238';
 // 加载所有Applications/Chat/App/Controllers/System所有文件

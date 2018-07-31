@@ -7,6 +7,7 @@
 ini_set('display_errors', 'off');
 error_reporting(E_ERROR);
 ini_set('date.timezone', 'Asia/Shanghai');
+require_once __DIR__ . 'Applications/Chat/App/Controllers/System/config.php';
 use Workerman\Worker;
 
 if (strpos(strtolower(PHP_OS), 'win') === 0) {
@@ -32,7 +33,7 @@ foreach (glob(__DIR__ . '/Applications/*/start*.php') as $start_file) {
     require_once $start_file;
 }
 //开启进程之间数据共享服务
-$worker = new GlobalData\Server('0.0.0.0', 2207);
+$worker = new GlobalData\Server();
 //配置log目录
 Worker::$logFile = __DIR__ . '/logs/workerman.log';
 Worker::$pidFile = __DIR__ . '/logs/workerman.pid';

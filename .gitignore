@@ -1,4 +1,3 @@
 logs
-Applications/Chat/start_*
-Applications/Chat/Events.php
 .idea
+Applications/Chat/App/Controllers/System/config*.php
