@@ -26,11 +26,11 @@ use \GatewayWorker\Lib\Gateway;
 class Events
 {
     protected static $db;
-    public static $mysqlHost = '127.0.0.1';
-    public static $mysqlPort = '3306';
-    public static $mysqlUser = 'test';
-    public static $mysqlPas = '123456';
-    public static $DBName = 'mychat';
+    public static $mysqlHost = MYSQL_HOST;
+    public static $mysqlPort = MYSQL_PORTS;
+    public static $mysqlUser = MYSQL_USER;
+    public static $mysqlPas = MYSQL_PASS;
+    public static $DBName = DB_NAME;
     protected static $global_data;
 
     /**
@@ -42,7 +42,7 @@ class Events
     public static function onWorkerStart($businessWorker)
     {
         self::$db = new Workerman\MySQL\Connection(self::$mysqlHost, self::$mysqlPort, self::$mysqlUser, self::$mysqlPas, self::$DBName);
-        self::$global_data = new GlobalData\Client('0.0.0.0:2207');
+        self::$global_data = new GlobalData\Client(GLOBAL_SERVER);
     }
 
     /**

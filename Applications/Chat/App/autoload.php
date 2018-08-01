@@ -1,12 +1,11 @@
 <?php
 ini_set('date.timezone','Asia/Shanghai');
-ini_set('display_errors','off');
-error_reporting(E_ERROR);
+ini_set('display_errors','on');
+error_reporting(E_COMPILE_ERROR);
 session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use GatewayClient\Gateway;
-Gateway::$registerAddress = '127.0.0.1:1238';
 // 加载所有Applications/Chat/App/Controllers/System所有文件
 foreach(glob(__DIR__.'/Controllers/System/*.php') as $start_file)
 {
@@ -22,16 +21,12 @@ if(!extension_loaded('posix'))
 {
     exit("Please install posix extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
 }
-$mysqlHost = '127.0.0.1';
-$mysqlPort = '3306';
-$mysqlUser = 'test';
-$mysqlPas = '123456';
-$DBName = 'mychat';
-$global_db = new Workerman\MySQL\Connection($mysqlHost, $mysqlPort, $mysqlUser, $mysqlPas, $DBName);
+Gateway::$registerAddress = REGISTER_SERVER;
+$global_db = new Workerman\MySQL\Connection(MYSQL_HOST, MYSQL_PORTS, MYSQL_USER, MYSQL_PASS, DB_NAME);
 /**
  * 全局变量服务，用于进程间变量共享
  */
-$global_server = new GlobalData\Client('127.0.0.1:2207');
+$global_server = new GlobalData\Client(GLOBAL_SERVER);
 
 /**
  * 设置登录的token   防止非法登录
