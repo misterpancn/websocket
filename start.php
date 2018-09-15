@@ -5,7 +5,7 @@
  */
 
 ini_set('display_errors', 'off');
-error_reporting(E_ERROR);
+error_reporting(0);
 ini_set('date.timezone', 'Asia/Shanghai');
 require_once __DIR__ . '/Applications/Chat/App/Controllers/System/config.php';
 use Workerman\Worker;

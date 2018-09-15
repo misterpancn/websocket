@@ -1,6 +1,7 @@
 <?php
 require_once "../App/autoload.php";
 require_once '../App/Controllers/LoginController.php';
+echo $_SESSION['users_id'];print_r($globalServer->all_user_info);print_r($globalServer->allUsers);print_r($globalServer->allToken);
 ?>
 <!DOCTYPE HTML>
 <html lang="zh-cmn-Hans">

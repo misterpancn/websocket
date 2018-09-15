@@ -31,7 +31,8 @@ class Events
     public static $mysqlUser = MYSQL_USER;
     public static $mysqlPas = MYSQL_PASS;
     public static $DBName = DB_NAME;
-    protected static $global_data;
+    protected static $globalData;
+    protected static $redisService;
 
     /**
      * 进程启动后实例化连接数据库，每个进程都会实例化一个连接
@@ -42,7 +43,8 @@ class Events
     public static function onWorkerStart($businessWorker)
     {
         self::$db = new Workerman\MySQL\Connection(self::$mysqlHost, self::$mysqlPort, self::$mysqlUser, self::$mysqlPas, self::$DBName);
-        self::$global_data = new GlobalData\Client(GLOBAL_SERVER);
+        self::$globalData = new GlobalData\Client(GLOBAL_SERVER);
+        self::$redisService = new \Predis\Client(['host' => '127.0.0.1', 'port' => '6379']);
     }
 
     /**
@@ -83,41 +85,42 @@ class Events
     {
         // data={"type":"login", "uid":"666"}
         $data = json_decode($message, true);
-        // 如果没有$_SESSION['uid']说明客户端没有登录
-        if (!isset($_SESSION['uid']) && $data['type'] == 'login') {
-            // 消息类型不是登录视为非法请求，关闭连接
-            $all_token = self::$global_data->allToken;
-            if ($data['type'] !== 'login' || empty($data['uid']) || empty($data['token']) || !in_array($data['token'], $all_token)) {
-                return Gateway::closeClient($client_id);
-            }
-            // 设置session，标记该客户端已经登录
-            $_SESSION['uid'] = $data['uid'];
-            Gateway::bindUid($client_id, $data['uid']);
-            foreach ($all_token as $k => $v) {
-                if ($data['token'] == $v) {
-                    unset($all_token[$k]);
-                }
-            }
-            self::$global_data->allToken = $all_token;
-            if (!in_array($data['uid'], self::$global_data->allUsers)) {
-                if (isset(self::$global_data->allUsers) && sizeof(self::$global_data->allUsers) > 0) {
-                    $overflow = 0;
-                    do {
-                        $old_value = $new_value = self::$global_data->allUsers;
-                        $new_value[] = $data['uid'];
-                        $overflow++;
-                    } while (!self::$global_data->cas('allUsers', $old_value, $new_value) && $overflow < 10);
-                } else {
-                    self::$global_data->allUsers = array($data['uid']);
-                }
-            }
-        }
+        file_put_contents(__DIR__.'/../../logs/record.log',$message,FILE_APPEND);
+        echo $message."\n";
         switch ($data['type']) {
             case 'message':
                 Gateway::sendToAll(self::messagePack('msg', $data['content'], $_SESSION['uid']));
                 break;
             case 'login':
+                // 消息类型不是登录视为非法请求，关闭连接
+                if (empty($data['uid']) || empty($data['token'])) {
+                    return Gateway::closeClient($client_id);
+                }
+                // 设置session，标记该客户端已经登录
+                $_SESSION['uid'] = $data['uid'];
+                Gateway::bindUid($client_id, $data['uid']);
+                if(!self::$redisService->exists("cuid:".$data['uid'])){ // 登录的时候
+                    //添加登录用户到全局变量和redis
+                    self::CasSet("allUsers",$data['uid']);
+                    self::$redisService->set("cuid:".$data['uid'],$data['uid']);
+                }elseif(sizeof(self::$globalData->allUsers)==0){   // 服务器重启  原始在线用户数据恢复
+                    $allKeys = self::$redisService->keys("cuid*");
+                    if(sizeof($allKeys)){
+                        foreach ($allKeys as $key){
+                            $userID = self::$redisService->get($key);
+                            if($userID) {
+                                self::CasSet("allUsers", $userID);
+                                $res = self::$db->select('user_name,login_ip')->from('users')->where("user_id={$userID}")->row();
+                                $userInfo = array('id' => $userID, 'user_name' => $res['user_name'], 'city' => self::getCityFromIP($res['login_ip'], true), 'ip' => $res['login_ip']);
+                                self::CasSet("all_user_info", $userInfo);
+                            }
+                        }
+                    }
+                }
                 Gateway::sendToAll(self::messagePack('login', '', $_SESSION['uid']));
+                break;
+            case 'logout':
+                self::clearUser($_SESSION['uid']);
                 break;
         }
         // 向所有人发送 
@@ -131,8 +134,7 @@ class Events
      */
     public static function onClose($client_id)
     {
-        self::clearUser($_SESSION['uid']);
-        $user = self::$db->select('user_name')->from('users')->where('user_id=' . $_SESSION['uid'])->row();
+        $user = self::$db->select('user_name')->from('users')->where('user_id=' . (int)$_SESSION['uid'])->row();
         // 向所有人发送
         GateWay::sendToAll(self::messagePack('logout', $user['user_name'] . '已退出聊天室'));
         unset($_SESSION['uid']);
@@ -140,15 +142,16 @@ class Events
 
     protected static function messagePack($type, $mes = '', $uid = 0, $send_user = '')
     {
-        $user_info = self::$global_data->all_user_info;
-        if ($uid) $user = $user_info[$uid] ? $user_info[$uid] : self::$db->select('user_name')->from('users')->where('user_id=' . $uid)->row();
+        $user_info = self::$globalData->all_user_info;
+        $user = self::getGlobalUserInfo($uid);
+        if ($uid) $user = $user ? $user : self::$db->select('user_name')->from('users')->where('user_id=' . $uid)->row();
         $data = [
             'type'      => $type,
             'content'   => $type == 'login' ? $user['user_name'] . '加入聊天室' : $mes,
             'user_name' => $send_user ? $send_user : $user['user_name'],
             'time'      => date('Y-m-d H:i:s'),
             'uid'       => $_SESSION['uid'],
-            'all_user'  => self::$global_data->all_user_info,
+            'all_user'  => self::$globalData->all_user_info,
             'server'    => 'Gateway'
         ];
         return json_encode($data);
@@ -169,25 +172,58 @@ class Events
         }
     }
 
-    protected function clearUser($uid)
+    protected static function clearUser($uid)
     {
-        $all_user = self::$global_data->allUsers;
-        $all_user_info = self::$global_data->all_user_info;
+        $all_user = self::$globalData->allUsers;
+        $all_user_info = self::$globalData->all_user_info;
         if ($all_user) {
             foreach ($all_user as $k => $v) {
                 if ($v == $uid) {
                     unset($all_user[$k]);
                 }
             }
-            self::$global_data->allUsers = $all_user;
+            self::$globalData->allUsers = $all_user;
         }
         if ($all_user_info) {
             foreach ($all_user_info as $k => $v) {
-                if ($k == $uid) {
+                if ($v['id'] == $uid) {
                     unset($all_user_info[$k]);
                 }
             }
-            self::$global_data->all_user_info = $all_user_info;
+            self::$globalData->all_user_info = $all_user_info;
         }
+    }
+
+    protected static function CasSet($key,$newValue,$moreArray = false)
+    {
+        $overflow = 0;
+        if(sizeof(self::$globalData->__get($key))>0) {
+            do {
+                $old_value = $new_value = self::$globalData->__get($key);
+                $new_value[] = $newValue;
+                $overflow++;
+            } while (!self::$globalData->cas($key, $old_value, $new_value) && $overflow < 10);
+        }else{
+            if(!$moreArray) {
+                self::$globalData->__set($key, array($newValue));
+            }else{
+                self::$globalData->__set($key, $newValue);
+            }
+        }
+        echo json_encode(self::$globalData->__get($key));echo date("Y/m/d H:i:s")."\n";
+    }
+
+    public static function getGlobalUserInfo($uid)
+    {
+        $userData = self::$globalData->all_user_info;
+        $res = null;
+        if(sizeof($userData)){
+            foreach ($userData as $v){
+                if($v['id'] == $uid){
+                    $res = $v;
+                }
+            }
+        }
+        return $res;
     }
 }

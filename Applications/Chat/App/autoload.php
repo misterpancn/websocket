@@ -11,7 +11,6 @@ foreach(glob(__DIR__.'/Controllers/System/*.php') as $start_file)
 {
     require_once $start_file;
 }
-
 if(!extension_loaded('pcntl'))
 {
     exit("Please install pcntl extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
@@ -22,17 +21,18 @@ if(!extension_loaded('posix'))
     exit("Please install posix extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
 }
 Gateway::$registerAddress = REGISTER_SERVER;
-$global_db = new Workerman\MySQL\Connection(MYSQL_HOST, MYSQL_PORTS, MYSQL_USER, MYSQL_PASS, DB_NAME);
+$globalDB = new Workerman\MySQL\Connection(MYSQL_HOST, MYSQL_PORTS, MYSQL_USER, MYSQL_PASS, DB_NAME);
 /**
  * 全局变量服务，用于进程间变量共享
  */
-$global_server = new GlobalData\Client(GLOBAL_SERVER);
+$globalServer = new GlobalData\Client(GLOBAL_SERVER);
+$redisService = new \Predis\Client(['host' => '127.0.0.1', 'port' => '6379']);
 
 /**
  * 设置登录的token   防止非法登录
  */
 if(isset($_SESSION['token']) && $_SESSION['token'] && $_SESSION['users_id']){
-    $all_Token = $global_server->allToken;
+    $all_Token = $globalServer->allToken;
     if(empty($all_Token) || sizeof($all_Token) == 0 || !in_array($_SESSION['token'],$all_Token)){
         $_SESSION['token'] = md5(time().$_SESSION['users_id']);
         $overflow = 0;
@@ -42,7 +42,7 @@ if(isset($_SESSION['token']) && $_SESSION['token'] && $_SESSION['users_id']){
             $new_value[] = $_SESSION['token'];
             $overflow++;
         }
-        while(!$global_server->cas('allToken', $old_value, $new_value) && $overflow < 10);
+        while(!$globalServer->cas('allToken', $old_value, $new_value) && $overflow < 10);
     }
 }
 /**

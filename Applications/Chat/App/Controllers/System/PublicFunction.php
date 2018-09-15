@@ -85,3 +85,22 @@ function get_ip_city($ip, $get_address = false){
         return $data;
     }
 }
+
+function cas_set($key,$newValue,$moreArray = false)
+{
+    global $globalServer;
+    if(sizeof($globalServer->__get($key))>0) {
+        $overflow = 0;
+        do {
+            $old_value = $new_value = $globalServer->__get($key);
+            $new_value[] = $newValue;
+            $overflow++;
+        } while (!$globalServer->cas($key, $old_value, $new_value) && $overflow < 10);
+    }else{
+        if(!$moreArray) {
+            $globalServer->__set($key, array($newValue));
+        }else{
+            $globalServer->__set($key, $newValue);
+        }
+    }
+}
