@@ -1,7 +1,12 @@
 <?php
 require_once "../App/autoload.php";
 require_once '../App/Controllers/LiveChatController.php';
-echo $_SESSION['users_id'];print_r($globalServer->all_user_info);print_r($globalServer->allUsers);print_r($globalServer->allToken);
+if(IS_BETA) {
+    echo $_SESSION['users_id'];
+    print_r($globalServer->all_user_info);
+    print_r($globalServer->allUsers);
+    print_r($globalServer->allToken);
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="zh-cmn-Hans">
@@ -33,55 +38,61 @@ echo $_SESSION['users_id'];print_r($globalServer->all_user_info);print_r($global
     <link rel="stylesheet" href="css/amazeui.min.css">
     <link rel="stylesheet" href="css/app.css">
     <style>
-        #vld-tooltip {
-            position: absolute;
-            z-index: 1000;
-            padding: 5px 10px;
-            background: #F37B1D;
-            min-width: 150px;
-            color: #fff;
-            transition: all 0.15s;
-            box-shadow: 0 0 5px rgba(0,0,0,.15);
-            display: none;
+        body {
+            font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans","wenquanyi micro hei","Hiragino Sans GB", "Hiragino Sans GB W3", Arial, sans-serif;
+            font-size: 1.4rem;
         }
-
-        #vld-tooltip:before {
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            width: 0;
-            height: 0;
-            margin-left: -8px;
-            content: "";
-            border-width: 0 8px 8px;
-            border-color: transparent transparent #F37B1D;
-            border-style: none inset solid;
+        .am-cs-mess-con{
+            height: 65%;
+            max-height: 720px;
+            min-height: 300px;
+        }
+        .am-cs-mess{
+            height: 70%;
+            overflow-y: auto;
+        }
+        .am-cs-user{
+            position: absolute;/*top: 50%;transform: translate(-50%, 0);*/
         }
     </style>
 </head>
-<body>
-<div class="am-g doc-am-g am-u-sm-centered" style="width: 60%">
-    <div class="am-u-sm-6 am-u-md-4 am-u-lg-3">
-        <h3>在线用户</h3>
+<body class="am-g">
+<div class="am-fl am-cs-user am-hide-md-up">
+    <span class="am-icon-sm am-icon-chevron-circle-right am-cs-show-user" data-rel="open"></span>
+</div>
+<div class="am-u-sm-centered am-u-md-11 am-u-md-centered am-u-sm-12 am-u-lg-7 am-u-lg-centered">
+    <div id="am-cs-user" class="am-offcanvas">
+        <div class="am-offcanvas-bar">
+            <!-- 你的内容 -->
+            <div class="am-offcanvas-content">
+                <p>在线用户</p>
+                <ul class="am-list am-list-static am-list-border am-list-striped user-list">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-4 am-u-lg-3 am-fl am-show-md-up">
+        <label>在线用户</label>
         <ul class="am-list am-list-static am-list-border am-list-striped user-list">
             
         </ul>
     </div>
-    <div class="am-u-sm-6 am-u-md-8 am-u-lg-9">
-        <div class="">
+    <div class="am-u-sm-12 am-u-md-8 am-u-lg-9 am-fl am-cs-mess-con">
+        <div class="am-cs-mess">
             <input type="hidden" value="<?php echo $_SESSION['users_id']?>" id="user_id"/>
             <input type="hidden" value="<?php echo $_SESSION['token']?>" id="token"/>
             <ul class="am-comments-list am-comments-list-flip chat-content">
                 <!-- 聊天室消息 -->
             </ul>
-            <div class="am-form">
-                <div class="am-form-group">
-                    <label for="doc-ta-1">文本域</label>
-                    <textarea class="am-accordion-content" rows="5" id="message"></textarea>
-                </div>
+        </div>
+        <div class="am-form">
+            <div class="am-form-group">
+                <label for="doc-ta-1">文本域</label>
+                <textarea class="am-accordion-content" rows="5" id="message"></textarea>
             </div>
             <button class="am-btn am-btn-primary am-btn-sm logout am-fl">退出</button>
-            <button class="am-btn am-btn-primary am-btn-sm send-message am-fr">发送</button>
+            <button class="am-btn am-btn-primary am-btn-sm send-message am-fr" data-doc-animation="shake">发送</button>
         </div>
     </div>
 </div>

@@ -85,8 +85,8 @@ class Events
     {
         // data={"type":"login", "uid":"666"}
         $data = json_decode($message, true);
-        file_put_contents(__DIR__.'/../../logs/record.log',$message,FILE_APPEND);
-        echo $message."\n";
+        file_put_contents(__DIR__ . '/../../logs/record.log', $message, FILE_APPEND);
+        echo $message . "\n";
         switch ($data['type']) {
             case 'message':
                 Gateway::sendToAll(self::messagePack('msg', $data['content'], $_SESSION['uid']));
@@ -99,20 +99,23 @@ class Events
                 // 设置session，标记该客户端已经登录
                 $_SESSION['uid'] = $data['uid'];
                 Gateway::bindUid($client_id, $data['uid']);
-                if(!self::$redisService->exists("cuid:".$data['uid'])){ // 登录的时候
+                if (!self::$redisService->exists("cuid:" . $data['uid'])) { // 登录的时候
                     //添加登录用户到全局变量和redis
-                    self::CasSet("allUsers",$data['uid']);
-                    self::$redisService->set("cuid:".$data['uid'],$data['uid']);
-                }elseif(sizeof(self::$globalData->allUsers)==0){   // 服务器重启  原始在线用户数据恢复
+                    self::CasSet("allUsers", $data['uid']);
+                    self::$redisService->set("cuid:" . $data['uid'], $data['uid']);
+                } elseif (sizeof(self::$globalData->allUsers) == 0) {   // 服务器重启  原始在线用户数据恢复
                     $allKeys = self::$redisService->keys("cuid*");
-                    if(sizeof($allKeys)){
-                        foreach ($allKeys as $key){
+                    $allUserInfo = self::$globalData->all_user_info;
+                    if (sizeof($allKeys)) {
+                        foreach ($allKeys as $key) {
                             $userID = self::$redisService->get($key);
-                            if($userID) {
+                            if ($userID) {
                                 self::CasSet("allUsers", $userID);
                                 $res = self::$db->select('user_name,login_ip')->from('users')->where("user_id={$userID}")->row();
-                                $userInfo = array('id' => $userID, 'user_name' => $res['user_name'], 'city' => self::getCityFromIP($res['login_ip'], true), 'ip' => $res['login_ip']);
-                                self::CasSet("all_user_info", $userInfo);
+                                if (sizeof($allUserInfo) == 0) {
+                                    $userInfo = array('id' => $userID, 'user_name' => $res['user_name'], 'city' => self::getCityFromIP($res['login_ip'], true), 'ip' => $res['login_ip']);
+                                    self::CasSet("all_user_info", $userInfo);
+                                }
                             }
                         }
                     }
@@ -145,6 +148,9 @@ class Events
         $user_info = self::$globalData->all_user_info;
         $user = self::getGlobalUserInfo($uid);
         if ($uid) $user = $user ? $user : self::$db->select('user_name')->from('users')->where('user_id=' . $uid)->row();
+        if($mes){
+            $mes = preg_replace('/[\\n\\r]/i','<br>',$mes);
+        }
         $data = [
             'type'      => $type,
             'content'   => $type == 'login' ? $user['user_name'] . '加入聊天室' : $mes,
@@ -194,32 +200,33 @@ class Events
         }
     }
 
-    protected static function CasSet($key,$newValue,$moreArray = false)
+    protected static function CasSet($key, $newValue, $moreArray = false)
     {
         $overflow = 0;
-        if(sizeof(self::$globalData->__get($key))>0) {
+        if (sizeof(self::$globalData->__get($key)) > 0) {
             do {
                 $old_value = $new_value = self::$globalData->__get($key);
                 $new_value[] = $newValue;
                 $overflow++;
             } while (!self::$globalData->cas($key, $old_value, $new_value) && $overflow < 10);
-        }else{
-            if(!$moreArray) {
+        } else {
+            if (!$moreArray) {
                 self::$globalData->__set($key, array($newValue));
-            }else{
+            } else {
                 self::$globalData->__set($key, $newValue);
             }
         }
-        echo json_encode(self::$globalData->__get($key));echo date("Y/m/d H:i:s")."\n";
+        echo json_encode(self::$globalData->__get($key));
+        echo date("Y/m/d H:i:s") . "\n";
     }
 
     public static function getGlobalUserInfo($uid)
     {
         $userData = self::$globalData->all_user_info;
         $res = null;
-        if(sizeof($userData)){
-            foreach ($userData as $v){
-                if($v['id'] == $uid){
+        if (sizeof($userData)) {
+            foreach ($userData as $v) {
+                if ($v['id'] == $uid) {
                     $res = $v;
                 }
             }
