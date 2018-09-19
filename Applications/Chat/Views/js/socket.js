@@ -4,14 +4,15 @@
 var socket;
 var user_id = $('#user_id').val();
 var token = $("#token").val();
+var first = true;
 function connectWS() {
     socket = new WebSocket('ws://' + document.domain + ':9526');
-    socket.onopen = onopen;
+    socket.onopen = onopensocket;
     socket.onmessage = onmessage;
     socket.onerror = socket_error;
     socket.onclose = socket_close;
 }
-function onopen() {
+function onopensocket() {
     var send = '{"type":"login","uid":"' + user_id + '","token":"' + token + '"}';
     console.log('连接服务器成功');
     socket.send(send);
@@ -60,7 +61,10 @@ function onmessage(mes) {
             break;
     }
 }
-connectWS();
+if(first) {
+    connectWS();
+    first = false;
+}
 function sendMessage(mes) {
     if (mes) {
         mes=mes.replace(/[\r\n]/i,"<br>");
@@ -77,17 +81,26 @@ function socket_close() {
     setTimeout(connectWS, 5000);
 }
 $('.logout').on('click', function () {
-    $.ajax({
-        type: 'post',
-        url: 'login.php?action=logout',
-        data: {'uid': user_id},
-        success: function (msg) {
-            if (msg == 'success') {
-                socket.send('{"type":"logout"}')
-                location.reload();
-            }
+    $('#logout-confirm').modal({
+        relatedTarget: this,
+        onConfirm: function(options) {
+            $.ajax({
+                type: 'post',
+                url: 'login.php?action=logout',
+                data: {'uid': user_id},
+                success: function (msg) {
+                    if (msg == 'success') {
+                        socket.send('{"type":"logout"}')
+                        location.reload();
+                    }
+                }
+            })
+        },
+        // closeOnConfirm: false,
+        onCancel: function() {
+
         }
-    })
+    });
 })
 
 function say(content, type) {
@@ -113,7 +126,6 @@ function say(content, type) {
 }
 $('.send-message').on('click', function () {
     var msg = $('#message').val();
-    //alert(msg);
     if (msg != '' && msg != null) {
         sendMessage(msg);
     } else {
@@ -125,7 +137,14 @@ $('.send-message').on('click', function () {
         }, 50)
     }
 })
-
+function keySend(event) {
+    if (event.ctrlKey && event.keyCode == 13) {
+        var msg = $('#message').val();
+        if (msg != '' && msg != null) {
+            sendMessage(msg);
+        }
+    }
+}
 function renderer_data(data) {
     var html = '';
     for (i = 0; i < data.length; i++) {

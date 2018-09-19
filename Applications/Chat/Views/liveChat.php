@@ -71,11 +71,23 @@ if(IS_BETA) {
         </div>
         <div class="am-form">
             <div class="am-form-group">
-                <label for="doc-ta-1">文本域</label>
-                <textarea class="am-accordion-content" rows="5" id="message"></textarea>
+                <label for="doc-ta-1">输入框</label>
+                <textarea class="am-accordion-content" rows="5" id="message" onkeydown="keySend(event);" title="按ctrl+enter直接发送" placeholder="按ctrl+enter直接发送"></textarea>
             </div>
             <button class="am-btn am-btn-primary am-btn-sm logout am-fl">退出</button>
             <button class="am-btn am-btn-primary am-btn-sm send-message am-fr" data-doc-animation="shake">发送</button>
+        </div>
+    </div>
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="logout-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">提示</div>
+            <div class="am-modal-bd">
+                你，确定要退出吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
         </div>
     </div>
 </div>
