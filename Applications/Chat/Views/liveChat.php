@@ -37,24 +37,7 @@ if(IS_BETA) {
 
     <link rel="stylesheet" href="css/amazeui.min.css">
     <link rel="stylesheet" href="css/app.css">
-    <style>
-        body {
-            font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans","wenquanyi micro hei","Hiragino Sans GB", "Hiragino Sans GB W3", Arial, sans-serif;
-            font-size: 1.4rem;
-        }
-        .am-cs-mess-con{
-            height: 65%;
-            max-height: 720px;
-            min-height: 300px;
-        }
-        .am-cs-mess{
-            height: 70%;
-            overflow-y: auto;
-        }
-        .am-cs-user{
-            position: absolute;/*top: 50%;transform: translate(-50%, 0);*/
-        }
-    </style>
+    <link rel="stylesheet" href="css/chat.css">
 </head>
 <body class="am-g">
 <div class="am-fl am-cs-user am-hide-md-up">

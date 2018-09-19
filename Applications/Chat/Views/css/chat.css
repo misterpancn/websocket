@@ -1,0 +1,17 @@
+body {
+    font-family: "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans","wenquanyi micro hei","Hiragino Sans GB", "Hiragino Sans GB W3", Arial, sans-serif;
+    font-size: 1.4rem;
+}
+.am-cs-mess-con{
+    height: 65%;
+    max-height: 720px;
+    min-height: 300px;
+}
+.am-cs-mess{
+    height: 70%;
+    max-height: 504px;
+    overflow-y: auto;
+}
+.am-cs-user{
+    position: absolute;/*top: 50%;transform: translate(-50%, 0);*/
+}
