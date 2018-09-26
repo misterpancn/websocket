@@ -11,7 +11,7 @@ require_once '../App/Controllers/LoginController.php';
     <meta name="keywords" content="">
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
-    <title>Live Chat</title>
+    <title>Demo</title>
 
     <!-- Set render engine for 360 browser -->
     <meta name="renderer" content="webkit">

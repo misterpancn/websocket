@@ -75,6 +75,7 @@ editor.customConfig.emotions = [
     }
 ]
 editor.create();
+$("#editor").children('.w-e-text-container').css({'height':'104px','max-height':'150px'});
 function connectWS() {
     socket = new WebSocket('ws://' + document.domain + ':9526');
     socket.onopen = onopensocket;
