@@ -5,6 +5,76 @@ var socket;
 var user_id = $('#user_id').val();
 var token = $("#token").val();
 var first = true;
+var E = window.wangEditor;
+var editor = new E("#editor");
+// 自定义菜单配置
+editor.customConfig.menus = [
+    'emoticon',  // 表情
+//    'head',  // 标题
+    'bold',  // 粗体
+    'fontSize',  // 字号
+    'fontName',  // 字体
+    'italic',  // 斜体
+//    'underline',  // 下划线
+//    'strikeThrough',  // 删除线
+    'foreColor',  // 文字颜色
+//    'backColor',  // 背景颜色
+//    'link',  // 插入链接
+//    'list',  // 列表
+//    'justify',  // 对齐方式
+//    'quote',  // 引用
+    'image',  // 插入图片
+//    'table',  // 表格
+//    'video',  // 插入视频
+//    'code',  // 插入代码
+//    'undo',  // 撤销
+//    'redo'  // 重复
+];
+//  获取新浪的表情包
+var sina_emoji = new Array();
+$.ajax({
+    type:'GET',
+    url:'https://api.weibo.com/2/emotions.json?source=1362404091',
+    dataType: "jsonp",
+    jsonp: "callback",
+    success:function (mes) {
+        if(mes.data.length>0){
+            for (i=0;i<mes.data.length;i++){
+                var obj = {alt:mes.data[i].phrase,src:mes.data[i].icon};
+                sina_emoji.push(obj);
+            }
+        }
+    }
+})
+// 表情面板可以有多个 tab ，因此要配置成一个数组。数组每个元素代表一个 tab 的配置
+editor.customConfig.emotions = [
+    /*{
+        // tab 的标题
+        title: '默认',
+        // type -> 'emoji' / 'image'
+        type: 'image',
+        // content -> 数组
+        content: [
+            {
+                alt: '[坏笑]',
+                src: 'http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/50/pcmoren_huaixiao_org.png'
+            },
+            {
+                alt: '[舔屏]',
+                src: 'http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/pcmoren_tian_org.png'
+            }
+        ]
+    },*/
+    {
+        // tab 的标题
+        title: '新浪',
+        // type -> 'emoji' / 'image'
+        type: 'image',
+        // content -> 数组
+        content: sina_emoji
+    }
+]
+editor.create();
 function connectWS() {
     socket = new WebSocket('ws://' + document.domain + ':9526');
     socket.onopen = onopensocket;
@@ -68,6 +138,7 @@ if(first) {
 function sendMessage(mes) {
     if (mes) {
         mes=mes.replace(/[\r\n]/i,"<br>");
+        mes = mes.replace(/"/g,'\\"');
         var data = '{"type":"message","content":"' + mes + '"}';
         socket.send(data);
     }
@@ -122,11 +193,13 @@ function say(content, type) {
         '<div class="am-comment-bd">' + content.content + '</div></div></li>';
     $('.chat-content').append(html);
     $(".am-cs-mess").smoothScroll({position: $(".am-cs-mess")[0].scrollHeight});
-    $('#message').val('');
+    editor.txt.clear();
 }
 $('.send-message').on('click', function () {
-    var msg = $('#message').val();
-    if (msg != '' && msg != null) {
+    var text = editor.txt.text();
+    var msg = editor.txt.html();
+    if(/img/i.test(msg)){text = 1;}
+    if (text != '' && text != null) {
         sendMessage(msg);
     } else {
         var a = $(this), i = "am-animation-" + a.data("docAnimation");
@@ -139,8 +212,10 @@ $('.send-message').on('click', function () {
 })
 function keySend(event) {
     if (event.ctrlKey && event.keyCode == 13) {
-        var msg = $('#message').val();
-        if (msg != '' && msg != null) {
+        var text = editor.txt.text();
+        var msg = editor.txt.html();
+        if(/img/i.test(msg)){text = 1;}
+        if (text != '' && text != null) {
             sendMessage(msg);
         }
     }

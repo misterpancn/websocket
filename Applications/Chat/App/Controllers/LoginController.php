@@ -7,12 +7,18 @@ switch ($action) {
         $password = str_tirm($_POST['password']);
         $verify_password = str_tirm($_POST['verify_password']);
         $name = str_tirm($_POST['name']);
+        if(empty($name)){
+            warn('请填写正确的用户名');
+            redirect('register.php');
+        }
         if($password != $verify_password){
-            die('密码不一致');
+            warn('密码不一致');
+            redirect('register.php');
         }
         $res = $globalDB->select('user_id')->from('users')->where('user_email="'.$email.'"')->row();
         if($res['user_id']){
-            die('该邮箱已注册');
+            warn('该邮箱已注册');
+            redirect('register.php');
         }
 
         $globalDB->insert('users')->cols(array
@@ -26,11 +32,13 @@ switch ($action) {
         $res = $globalDB->select('user_password')->from('users')->where("user_email='{$email}'")->row();
         $user = $globalDB->select('user_id')->from('users')->where("user_email='{$email}'")->row();
         if(empty($res['user_password'])){
-            die('用户不存在');
+            warn('用户不存在');
+            redirect('login.php');
         }
         if($res['user_password'] == encryption($pwd)){
             if(Gateway::isUidOnline($user['user_id'])) {
-                die('你已在别处登录');
+                warn('你已在别处登录');
+                redirect('login.php');
             }
             $_SESSION['users_id'] = $user['user_id'];
             $_SESSION['token'] = md5(time().$user['user_id']);
@@ -43,7 +51,8 @@ switch ($action) {
             cas_set("all_user_info",$user_info);
             redirect('liveChat.php');
         }else{
-            die('密码错误');
+            warn('密码错误');
+            redirect('login.php');
         }
         break;
 
@@ -64,5 +73,10 @@ switch ($action) {
             echo 'success';
         }
         exit;
+        break;
+
+    case 'clear_warn':
+        clear_warn();
+        exit('success');
         break;
 }

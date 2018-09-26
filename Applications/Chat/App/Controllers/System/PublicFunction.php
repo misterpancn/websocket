@@ -8,6 +8,7 @@
 
 /**
  * 过滤字符
+ *
  * @param $content
  * @return array|string
  */
@@ -32,22 +33,24 @@ function str_tirm($content)
 
 /**
  * 重定向
+ *
  * @param $url
  */
 function redirect($url)
 {
-    header('location:'.$url);
+    header('location:' . $url);
 }
 
 /**
  * 加密字符
+ *
  * @param        $str
  * @param string $salt
  * @return string
  */
-function encryption($str,$salt = 'pw')
+function encryption($str, $salt = 'pw')
 {
-    $crypt = crypt($str,$salt);
+    $crypt = crypt($str, $salt);
     $md5 = md5($crypt);
     return sha1($md5);
 }
@@ -55,6 +58,7 @@ function encryption($str,$salt = 'pw')
 
 /**
  * 获取ip
+ *
  * @return array|false|string
  */
 function get_client_ip()
@@ -72,35 +76,52 @@ function get_client_ip()
     return ($ip);
 }
 
-function get_ip_city($ip, $get_address = false){
-    $url="http://ip.taobao.com/service/getIpInfo.php?ip=".$ip;
-    $ip=json_decode(file_get_contents($url));
-    if((string)$ip->code=='1'){
+function get_ip_city($ip, $get_address = false)
+{
+    $url = "http://ip.taobao.com/service/getIpInfo.php?ip=" . $ip;
+    $ip = json_decode(file_get_contents($url));
+    if ((string)$ip->code == '1') {
         return false;
     }
     $data = (array)$ip->data;
-    if($get_address){
-        return $data['country'].' '.$data['area'].' '.$data['region'].' '.$data['city'];
-    }else {
+    if ($get_address) {
+        return $data['country'] . ' ' . $data['area'] . ' ' . $data['region'] . ' ' . $data['city'];
+    } else {
         return $data;
     }
 }
 
-function cas_set($key,$newValue,$moreArray = false)
+function cas_set($key, $newValue, $moreArray = false)
 {
     global $globalServer;
-    if(sizeof($globalServer->__get($key))>0) {
+    if (sizeof($globalServer->__get($key)) > 0) {
         $overflow = 0;
         do {
             $old_value = $new_value = $globalServer->__get($key);
             $new_value[] = $newValue;
             $overflow++;
         } while (!$globalServer->cas($key, $old_value, $new_value) && $overflow < 10);
-    }else{
-        if(!$moreArray) {
+    } else {
+        if (!$moreArray) {
             $globalServer->__set($key, array($newValue));
-        }else{
+        } else {
             $globalServer->__set($key, $newValue);
         }
     }
+}
+
+function warn($mess, $level = "danger")
+{
+    $_SESSION['warn_mess'] = $mess;
+    if(in_array($level,['success','warning','danger','secondary'])){
+        $_SESSION['warn_class'] = 'am-alert-'.$level;
+    }else{
+        $_SESSION['warn_class'] = '';
+    }
+}
+
+function clear_warn()
+{
+    $_SESSION['warn_mess'] = '';
+    $_SESSION['warn_class'] = '';
 }

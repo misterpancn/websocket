@@ -1,12 +1,6 @@
 <?php
 require_once "../App/autoload.php";
 require_once '../App/Controllers/LiveChatController.php';
-if(IS_BETA) {
-    echo $_SESSION['users_id'];
-    print_r($globalServer->all_user_info);
-    print_r($globalServer->allUsers);
-    print_r($globalServer->allToken);
-}
 ?>
 <!DOCTYPE HTML>
 <html lang="zh-cmn-Hans">
@@ -17,7 +11,7 @@ if(IS_BETA) {
     <meta name="keywords" content="">
     <meta name="viewport"
           content="width=device-width, initial-scale=1">
-    <title>Live Chat</title>
+    <title>demo</title>
 
     <!-- Set render engine for 360 browser -->
     <meta name="renderer" content="webkit">
@@ -69,10 +63,12 @@ if(IS_BETA) {
                 <!-- 聊天室消息 -->
             </ul>
         </div>
+        <hr data-am-widget="divider" style="" class="am-divider am-divider-dashed" />
         <div class="am-form">
             <div class="am-form-group">
                 <label for="doc-ta-1">输入框</label>
-                <textarea class="am-accordion-content" rows="5" id="message" onkeydown="keySend(event);" title="按ctrl+enter直接发送" placeholder="按ctrl+enter直接发送"></textarea>
+                <div id="editor" onkeydown="keySend(event);" title="按ctrl+enter直接发送" placeholder="按ctrl+enter直接发送"></div>
+                <!--<textarea class="am-accordion-content" rows="5" id="message" onkeydown="keySend(event);" title="按ctrl+enter直接发送" placeholder="按ctrl+enter直接发送"></textarea>-->
             </div>
             <button class="am-btn am-btn-primary am-btn-sm logout am-fl">退出</button>
             <button class="am-btn am-btn-primary am-btn-sm send-message am-fr" data-doc-animation="shake">发送</button>
@@ -103,6 +99,7 @@ if(IS_BETA) {
 <script src="js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 <script src="js/amazeui.min.js"></script>
+<script src="js/wangEditor.min.js"></script>
 <script src="js/socket.js"></script>
 </body>
 </html>

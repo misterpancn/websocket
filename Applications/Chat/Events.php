@@ -85,7 +85,6 @@ class Events
     {
         // data={"type":"login", "uid":"666"}
         $data = json_decode($message, true);
-        file_put_contents(__DIR__ . '/../../logs/record.log', $message, FILE_APPEND);
         echo $message . "\n";
         switch ($data['type']) {
             case 'message':
