@@ -55,11 +55,14 @@ require_once '../App/Controllers/LiveChatController.php';
             
         </ul>
     </div>
-    <div class="am-u-sm-12 am-u-md-8 am-u-lg-9 am-fl am-cs-mess-con">
-        <div class="am-cs-mess">
+    <div class="am-u-sm-12 am-u-md-8 am-u-lg-9 am-fl am-cs-mess-con am-panel am-panel-secondary">
+        <div class="am-panel-hd am-text-center chat-title">在线群聊</div>
+        <div class="am-cs-mess am-panel-bd">
             <input type="hidden" value="<?php echo $_SESSION['users_id']?>" id="user_id"/>
             <input type="hidden" value="<?php echo $_SESSION['token']?>" id="token"/>
-            <ul class="am-comments-list am-comments-list-flip chat-content">
+            <input type="hidden" id="chat_id" />
+            <input type="hidden" id="group_id" value="allUsers" />
+            <ul class="am-comments-list am-comments-list-flip chat-content chat-content-allUsers">
                 <!-- 聊天室消息 -->
             </ul>
         </div>
@@ -83,6 +86,15 @@ require_once '../App/Controllers/LiveChatController.php';
             <div class="am-modal-footer">
                 <span class="am-modal-btn" data-am-modal-cancel>取消</span>
                 <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+    <div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd alert-title">警告</div>
+            <div class="am-modal-bd alert-cont">不能和自己聊天</div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn">确定</span>
             </div>
         </div>
     </div>

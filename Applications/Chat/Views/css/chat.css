@@ -3,19 +3,20 @@ body {
     font-size: 1.4rem;
 }
 .am-cs-mess-con{
-    height: 65%;
-    max-height: 720px;
-    min-height: 300px;
+   /* max-height: 720px;
+    min-height: 300px;*/
 }
 .am-cs-mess{
     height: 70%;
+    min-height: 504px;
     max-height: 504px;
     overflow-y: auto;
-    border: 1px solid #dedede;
+   /* border: 1px solid #dedede;*/
     border-radius: 0;
 }
 .am-cs-user{
     position: absolute;/*top: 50%;transform: translate(-50%, 0);*/
+    z-index: 101;
 }
 #editor div {
     z-index: 100 !important;
@@ -26,4 +27,10 @@ body {
 }
 #editor:focus:before{
     content:none;
+}
+.user-list li{
+    cursor: pointer;
+}
+.chat-content li, .chat-content div{
+    border: none !important;
 }
