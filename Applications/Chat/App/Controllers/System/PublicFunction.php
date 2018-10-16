@@ -110,13 +110,17 @@ function cas_set($key, $newValue, $moreArray = false)
     }
 }
 
-function warn($mess, $level = "danger")
+function warn($mess, $isApp = false, $level = "danger")
 {
-    $_SESSION['warn_mess'] = $mess;
-    if(in_array($level,['success','warning','danger','secondary'])){
-        $_SESSION['warn_class'] = 'am-alert-'.$level;
+    if(!$isApp) {
+        $_SESSION['warn_mess'] = $mess;
+        if (in_array($level, ['success', 'warning', 'danger', 'secondary'])) {
+            $_SESSION['warn_class'] = 'am-alert-' . $level;
+        } else {
+            $_SESSION['warn_class'] = '';
+        }
     }else{
-        $_SESSION['warn_class'] = '';
+        echo json_encode(['mess'=>$mess,'level'=>$level]);die;
     }
 }
 
