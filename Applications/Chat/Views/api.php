@@ -15,8 +15,8 @@ switch ($action){
     case 'get_emoji':
         $res = $globalDB->select(['path','phrase','common'])->from('emoji')->query();
         foreach ($res as $k=>$v){
-            $res[$k]['url'] = $v['path'];
-            $res[$k]['icon'] = $v['path'];
+            $res[$k]['url'] = "https://chat.misterpan.cn/".$v['path'];
+            $res[$k]['icon'] = "https://chat.misterpan.cn/".$v['path'];
         }
         echo json_encode($res);
         exit;
