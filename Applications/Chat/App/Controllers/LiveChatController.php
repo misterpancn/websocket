@@ -12,4 +12,13 @@ switch ($action){
         }
         exit;
         break;
+    case 'get_emoji':
+        $res = $globalDB->select(['path','phrase','common'])->from('emoji')->query();
+        foreach ($res as $k=>$v){
+            $res[$k]['url'] = "http://magicchat.com/".$v['path'];
+            $res[$k]['icon'] = "http://magicchat.com/".$v['path'];
+        }
+        echo json_encode($res);
+        exit;
+        break;
 }

@@ -34,13 +34,13 @@ editor.customConfig.menus = [
 var sina_emoji = new Array();
 $.ajax({
     type: 'GET',
-    url: 'https://api.weibo.com/2/emotions.json?source=1362404091',
-    dataType: "jsonp",
-    jsonp: "callback",
-    success: function (mes) {
-        if (mes.data.length > 0) {
-            for (i = 0; i < mes.data.length; i++) {
-                var obj = {alt: mes.data[i].phrase, src: mes.data[i].icon};
+    url: 'liveChat.php?action=get_emoji',
+    dataType: "json",
+    // jsonp: "callback",
+    success: function (data) {
+        if (data.length > 0) {
+            for (i = 0; i < data.length; i++) {
+                var obj = {alt: data[i].phrase, src: data[i].icon};
                 sina_emoji.push(obj);
             }
         }
