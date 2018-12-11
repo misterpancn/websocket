@@ -34,7 +34,7 @@ editor.customConfig.menus = [
 var sina_emoji = new Array();
 $.ajax({
     type: 'GET',
-    url: 'liveChat.php?action=get_emoji',
+    url: 'api.php?action=get_emoji',
     dataType: "json",
     // jsonp: "callback",
     success: function (data) {
