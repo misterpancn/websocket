@@ -54,7 +54,7 @@ switch ($action) {
             $user_info = array('id' => $user['user_id'], 'user_name' => $users_res['user_name'], 'city' => get_ip_city($users_res['login_ip'], true), 'ip' => $users_res['login_ip']);
             cas_set("all_user_info", $user_info);
             if ($_POST['is_app']) {
-                warn('success', $_POST['is_app'], ['user_id' => $user['user_id']]);
+                warn('success', $_POST['is_app'],'', ['user_id' => $user['user_id']]);
             }
             redirect('liveChat.php');
         } else {
