@@ -39,6 +39,7 @@ function str_tirm($content)
 function redirect($url)
 {
     header('location:' . $url);
+    exit;
 }
 
 /**
