@@ -22,8 +22,12 @@ switch ($action) {
             redirect('register.php');
         }
 
-        $globalDB->insert('users')->cols(array
-        ('user_email' => $email, 'user_password' => encryption($password), 'create_time' => date('Y-m-d H:i:s'), 'user_name' => $name))->query();
+        try {
+            $globalDB->insert('users')->cols(array
+            ('user_email' => $email, 'user_password' => encryption($password), 'phone_prefix' => '', 'create_time' => date('Y-m-d H:i:s'), 'user_name' => $name))->query();
+        } catch (Exception $e) {
+            warn('注册失败请联系管理员', $_POST['is_app']);
+        }
         if ($_POST['is_app']) {
             warn('success', $_POST['is_app']);
         }
@@ -54,7 +58,7 @@ switch ($action) {
             $user_info = array('id' => $user['user_id'], 'user_name' => $users_res['user_name'], 'city' => get_ip_city($users_res['login_ip'], true), 'ip' => $users_res['login_ip']);
             cas_set("all_user_info", $user_info);
             if ($_POST['is_app']) {
-                warn('success', $_POST['is_app'],'', ['user_id' => $user['user_id']]);
+                warn('success', $_POST['is_app'], '', ['user_id' => $user['user_id']]);
             }
             redirect('liveChat.php');
         } else {

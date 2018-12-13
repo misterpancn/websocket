@@ -44,7 +44,7 @@ if (isset($_SESSION['token']) && $_SESSION['token'] && $_SESSION['users_id']) {
 /**
  * 用户未登录且不是在login页面  重定向至登录页
  */
-$pageName = substr($_SERVER['REQUEST_URI'], 1, (strpos($_SERVER['REQUEST_URI'], '.') - 1));
+$pageName = substr($_SERVER['SCRIPT_NAME'], 1, (strpos($_SERVER['SCRIPT_NAME'], '.') - 1));
 $authorizations = [
     'login', 'register', 'StartCaptchaServlet', 'VerifyLoginServlet', 'api',
 ];
