@@ -26,7 +26,9 @@ switch ($action) {
             $globalDB->insert('users')->cols(array
             ('user_email' => $email, 'user_password' => encryption($password), 'phone_prefix' => '', 'create_time' => date('Y-m-d H:i:s'), 'user_name' => $name))->query();
         } catch (Exception $e) {
-            warn('注册失败请联系管理员', $_POST['is_app']);
+            warn('注册失败请联系管理员', $_POST['is_app'], 'danger',
+                ['error' => $e->getMessage()]
+            );
         }
         if ($_POST['is_app']) {
             warn('success', $_POST['is_app']);
