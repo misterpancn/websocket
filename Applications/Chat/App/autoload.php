@@ -51,3 +51,6 @@ $authorizations = [
 if (empty($_SESSION['users_id']) && Gateway::isUidOnline($_SESSION['users_id']) == 0 && !in_array($pageName, $authorizations)) {
     redirect('login.php');
 }
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: token,Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Methods: POST,GET,DELETE,OPTIONS');
