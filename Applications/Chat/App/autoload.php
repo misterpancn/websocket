@@ -1,6 +1,13 @@
 <?php
 ini_set('date.timezone', 'Asia/Shanghai');
 ini_set('display_errors', 'on');
+// 设置跨域请求
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: x-requested-with,Content-Type,X-CSRF-Token");
+header('Access-Control-Allow-Methods: POST,GET,DELETE,OPTIONS');
+//header("Access-Control-Allow-Credentials:true");
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') exit;
+
 error_reporting(E_COMPILE_ERROR);
 session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
@@ -51,6 +58,3 @@ $authorizations = [
 if (empty($_SESSION['users_id']) && Gateway::isUidOnline($_SESSION['users_id']) == 0 && !in_array($pageName, $authorizations)) {
     redirect('login.php');
 }
-header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Headers: token,Origin, X-Requested-With, Content-Type, Accept");
-header('Access-Control-Allow-Methods: POST,GET,DELETE,OPTIONS');
