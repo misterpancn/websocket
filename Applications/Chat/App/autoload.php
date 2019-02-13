@@ -1,18 +1,18 @@
 <?php
+use GatewayClient\Gateway;
+
 ini_set('date.timezone', 'Asia/Shanghai');
 ini_set('display_errors', 'on');
+error_reporting(E_ERROR);
 // 设置跨域请求
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: x-requested-with,Content-Type,X-CSRF-Token");
 header('Access-Control-Allow-Methods: POST,GET,DELETE,OPTIONS');
 //header("Access-Control-Allow-Credentials:true");
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') exit;
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') exit(200);
 
-error_reporting(E_COMPILE_ERROR);
 session_start();
 require_once __DIR__ . '/../../../vendor/autoload.php';
-
-use GatewayClient\Gateway;
 
 // 加载所有Applications/Chat/App/Controllers/System所有文件
 foreach (glob(__DIR__ . '/Controllers/System/*.php') as $start_file) {
@@ -55,6 +55,6 @@ $pageName = substr($_SERVER['SCRIPT_NAME'], 1, (strpos($_SERVER['SCRIPT_NAME'], 
 $authorizations = [
     'login', 'register', 'StartCaptchaServlet', 'VerifyLoginServlet', 'api',
 ];
-if (empty($_SESSION['users_id']) && Gateway::isUidOnline($_SESSION['users_id']) == 0 && !in_array($pageName, $authorizations)) {
+if (empty($_SESSION['users_id']) && !in_array($pageName, $authorizations) && strtolower(PHP_SAPI) != 'cli') {
     redirect('login.php');
 }
