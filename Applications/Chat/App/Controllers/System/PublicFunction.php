@@ -137,3 +137,10 @@ function clear_warn()
     $_SESSION['warn_mess'] = '';
     $_SESSION['warn_class'] = '';
 }
+
+function get_admin_info_by_id($id)
+{
+    global $globalDB;
+    $res = $globalDB->select('*')->from('users')->where("user_id={$id}")->row();
+    return $res;
+}
