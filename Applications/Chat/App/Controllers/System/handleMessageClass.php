@@ -88,6 +88,9 @@ class handleMessageClass
         }
         $allgroup = Gateway::getAllGroupIdList();
         @sort($allgroup);
+        foreach ($allgroup as $group) {
+            $all_group[] = ['group_name' => $group, 'img' => '/img/touxiang.png','group_id' => ''];
+        }
         $data = [
             'type'           => $type,
             'content'        => $type == 'login' ? $user['user_name'] . '加入聊天室' : $mes,
@@ -96,7 +99,7 @@ class handleMessageClass
             'from_uid'       => $_SESSION['uid'],
             'from_client'    => $_SESSION['uid'] ? Gateway::getClientIdByUid($_SESSION['uid']) : '',
             'all_user'       => self::$globalData->all_user_info,
-            'all_group'      => $allgroup,
+            'all_group'      => $all_group,
             'send_to_group'  => $cont['group'] ? $cont['group'] : 'allUsers',
             'send_to_uid'    => $cont['send_to_uid'],
             'send_to_client' => $cont['send_to_uid'] ? Gateway::getClientIdByUid($cont['send_to_uid']) : '',

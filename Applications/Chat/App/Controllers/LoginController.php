@@ -64,7 +64,7 @@ switch ($action) {
                     [
                         'user_id' => $user['user_id'],
                         'name' => $users_res['user_name'],
-                        'img' => 'img/touxiang.png',
+                        'img' => '/img/touxiang.png',
                         'all_user' => $globalServer->all_user_info
                     ]
                 );
