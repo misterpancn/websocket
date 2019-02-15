@@ -63,7 +63,9 @@ class handleMessageClass
                                 self::CasSet("allUsers", $userID);
                                 $res = self::$db->select('user_name,login_ip')->from('users')->where("user_id={$userID}")->row();
                                 if (sizeof($allUserInfo) == 0) {
-                                    $userInfo = array('id' => $userID, 'user_name' => $res['user_name'], 'city' => self::getCityFromIP($res['login_ip'], true), 'ip' => $res['login_ip']);
+                                    $userInfo = array(
+                                        'id' => $userID, 'user_name' => $res['user_name'], 'city' => self::getCityFromIP($res['login_ip'], true), 'ip' => $res['login_ip'],
+                                    );
                                     self::CasSet("all_user_info", $userInfo);
                                 }
                             }
@@ -89,7 +91,7 @@ class handleMessageClass
         $allgroup = Gateway::getAllGroupIdList();
         @sort($allgroup);
         foreach ($allgroup as $group) {
-            $all_group[] = ['group_name' => $group, 'img' => '/img/touxiang.png','group_id' => ''];
+            $all_group[] = ['group_name' => $group, 'img' => '/img/touxiang.png', 'group_id' => ''];
         }
         $data = [
             'type'           => $type,
@@ -100,7 +102,7 @@ class handleMessageClass
             'from_client'    => $_SESSION['uid'] ? Gateway::getClientIdByUid($_SESSION['uid']) : '',
             'all_user'       => self::$globalData->all_user_info,
             'all_group'      => $all_group,
-            'send_to_group'  => $cont['group'] ? $cont['group'] : 'allUsers',
+            'send_to_group'  => $cont['group'] ? $cont['group'] : ($cont['send_to_uid'] ? '' : 'allUsers'),
             'send_to_uid'    => $cont['send_to_uid'],
             'send_to_client' => $cont['send_to_uid'] ? Gateway::getClientIdByUid($cont['send_to_uid']) : '',
             'server'         => 'Gateway'
